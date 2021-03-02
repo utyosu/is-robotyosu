@@ -48,6 +48,8 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	switch {
 	case isWeaponExecute(m):
 		actionWeapon(m)
+	case isBattlePowerExecute(m):
+		actionBattlePower(m)
 	}
 }
 
