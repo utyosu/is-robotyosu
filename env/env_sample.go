@@ -8,4 +8,7 @@ const (
 	DiscordTargetChannelId = ""
 	GoogleSearchApiKey     = ""
 	GoogleSearchApiCx      = ""
+	SlackToken             = ""
+	SlackChannelWarning    = "#channel-name"
+	SlackChannelAlert      = "#channel-name"
 )

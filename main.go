@@ -14,6 +14,7 @@ func init() {
 }
 
 func main() {
+	defer app.NotifySlackWhenPanic("main")
 	app.Start()
 	return
 }

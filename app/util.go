@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"strings"
 )
@@ -19,4 +20,18 @@ func getName(m *discordgo.MessageCreate) string {
 		return m.Member.Nick
 	}
 	return m.Author.Username
+}
+
+func NotifySlackWhenPanic(info string) {
+	if err := recover(); err != nil {
+		postSlackAlert(fmt.Sprintf("panic: %v\ninfo: %v", err, info))
+	}
+}
+
+func messageInformation(s *discordgo.Session, m *discordgo.MessageCreate) string {
+	return fmt.Sprintf(
+		"session: %v\nmessage: %v",
+		s,
+		m,
+	)
 }

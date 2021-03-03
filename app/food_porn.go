@@ -27,7 +27,7 @@ func actionFoodPorn(m *discordgo.MessageCreate) {
 
 	request, err := http.NewRequest("GET", foodPornGoogleSearchUrl, nil)
 	if err != nil {
-		failedFoodPorn(m, errors.New(searchWord))
+		failedFoodPorn(m, errors.WithStack(err))
 		return
 	}
 
@@ -49,7 +49,7 @@ func actionFoodPorn(m *discordgo.MessageCreate) {
 
 	response, err := client.Do(request)
 	if err != nil {
-		failedFoodPorn(m, err)
+		failedFoodPorn(m, errors.WithStack(err))
 		return
 	}
 
@@ -57,17 +57,24 @@ func actionFoodPorn(m *discordgo.MessageCreate) {
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		failedFoodPorn(m, err)
+		failedFoodPorn(m, errors.WithStack(err))
 		return
 	}
 
 	jsonParsed, err := gabs.ParseJSON(body)
 	if err != nil {
-		failedFoodPorn(m, err)
+		failedFoodPorn(m, errors.WithStack(err))
 		return
 	}
 	if !jsonParsed.Exists("items", "0", "link") {
-		failedFoodPorn(m, fmt.Errorf("結果が取得できませんでした。キーワード: %v", searchWord))
+		err := errors.New(
+			fmt.Sprintf(
+				"結果を取得できませんでした。\nRequest: %v\nResponse: %v",
+				request.URL.String(),
+				string(body),
+			),
+		)
+		failedFoodPorn(m, err)
 		return
 	}
 	linkRaw := jsonParsed.Search("items", "0", "link").String()
@@ -79,8 +86,8 @@ func actionFoodPorn(m *discordgo.MessageCreate) {
 }
 
 func failedFoodPorn(m *discordgo.MessageCreate, err error) {
-	log.Println(err)
-	sendMessage(m.ChannelID, "画像の取得に失敗しました")
+	postSlackWarning(err)
+	sendMessage(m.ChannelID, "ごちそうの取得に失敗しました(´・ω・`)ｼｮﾎﾞﾝ")
 }
 
 const (

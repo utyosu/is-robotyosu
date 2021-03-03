@@ -32,7 +32,7 @@ func Start() {
 }
 
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	// defer NotifySlackWhenPanic(messageInformation(s, m))
+	defer NotifySlackWhenPanic(messageInformation(s, m))
 
 	// 自分のメッセージは処理しない
 	if m.Author.ID == env.DiscordBotClientId {
@@ -59,6 +59,6 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func sendMessage(channelID string, msg string) {
 	if _, err := discordSession.ChannelMessageSend(channelID, msg); err != nil {
-		// postSlackWarning(fmt.Sprintf("Error sending message: %v", err))
+		postSlackWarning(fmt.Sprintf("Error sending message: %v", err))
 	}
 }
