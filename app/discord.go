@@ -46,6 +46,8 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	log.Printf("\t%v\t%v\t%v\t%v\t%v\n", m.GuildID, m.ChannelID, m.Type, m.Author.Username, m.Content)
 
 	switch {
+	case isHelpExecute(m):
+		actionHelp(m)
 	case isWeaponExecute(m):
 		actionWeapon(m)
 	case isBattlePowerExecute(m):
