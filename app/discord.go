@@ -50,6 +50,8 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		actionWeapon(m)
 	case isBattlePowerExecute(m):
 		actionBattlePower(m)
+	case isFoodPornExecute(m):
+		actionFoodPorn(m)
 	}
 }
 
