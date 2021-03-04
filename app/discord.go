@@ -5,6 +5,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/utyosu/rfe/env"
 	"log"
+	"time"
 )
 
 var (
@@ -27,6 +28,7 @@ func Start() {
 	defer discordSession.Close()
 	log.Println("Listening...")
 
+	doFuncSchedule(recordServerActivities, time.Second*env.RecordIntervalTime)
 	<-stopBot
 	return
 }

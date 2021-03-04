@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"strings"
+	"time"
 )
 
 func isContainKeywords(m string, keywords []string) bool {
@@ -34,4 +35,14 @@ func messageInformation(s *discordgo.Session, m *discordgo.MessageCreate) string
 		s,
 		m,
 	)
+}
+
+func doFuncSchedule(f func(), interval time.Duration) *time.Ticker {
+	ticker := time.NewTicker(interval)
+	go func() {
+		for range ticker.C {
+			f()
+		}
+	}()
+	return ticker
 }
