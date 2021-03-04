@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/utyosu/rfe/app"
+	"github.com/utyosu/rfe/db"
 	"math/rand"
 	"time"
 )
@@ -15,6 +16,7 @@ func init() {
 
 func main() {
 	defer app.NotifySlackWhenPanic("main")
+	db.ConnectDb()
 	app.Start()
 	return
 }
