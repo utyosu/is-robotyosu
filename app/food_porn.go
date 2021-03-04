@@ -5,6 +5,7 @@ import (
 	"github.com/Jeffail/gabs/v2"
 	"github.com/bwmarrin/discordgo"
 	"github.com/pkg/errors"
+	"github.com/utyosu/rfe/db"
 	"github.com/utyosu/rfe/env"
 	"io/ioutil"
 	"log"
@@ -83,6 +84,10 @@ func actionFoodPorn(m *discordgo.MessageCreate) {
 	linkUrl := strings.Replace(linkRaw, "\"", "", -1)
 
 	sendMessage(m.ChannelID, linkUrl)
+
+	if _, err := db.InsertActivity(m.Author.ID, db.ActivityKindFoodPorn); err != nil {
+		postSlackWarning(errors.WithStack(err))
+	}
 }
 
 func failedFoodPorn(m *discordgo.MessageCreate, err error) {

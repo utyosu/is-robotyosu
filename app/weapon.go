@@ -3,6 +3,8 @@ package app
 import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/pkg/errors"
+	"github.com/utyosu/rfe/db"
 	"math/rand"
 )
 
@@ -22,6 +24,10 @@ func actionWeapon(m *discordgo.MessageCreate) {
 			weapon.special,
 		),
 	)
+
+	if _, err := db.InsertActivity(m.Author.ID, db.ActivityKindWeapon); err != nil {
+		postSlackWarning(errors.WithStack(err))
+	}
 }
 
 type weaponSet struct {

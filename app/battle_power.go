@@ -3,6 +3,8 @@ package app
 import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/pkg/errors"
+	"github.com/utyosu/rfe/db"
 	"math/rand"
 )
 
@@ -11,9 +13,30 @@ func isBattlePowerExecute(m *discordgo.MessageCreate) bool {
 }
 
 func actionBattlePower(m *discordgo.MessageCreate) {
+	activities, err := db.FetchTodayActivities(m.Author.ID, db.ActivityKindBattlePower)
+	if err != nil {
+		sendMessage(m.ChannelID, messageError)
+		return
+	} else if len(activities) > 0 {
+		sendMessage(m.ChannelID, "戦闘力は1日に1回しか測定できません。")
+		return
+	}
+
 	battlePower := battlePowerList[rand.Intn(len(battlePowerList))]
-	sendMessage(m.ChannelID, fmt.Sprintf("%vさんの戦闘力は…%v！\n【**%v**】と同じくらいだ…！", getName(m), battlePower.power, battlePower.name))
+	sendMessage(
+		m.ChannelID,
+		fmt.Sprintf(
+			"%vさんの戦闘力は…%v！\n【**%v**】と同じくらいだ…！",
+			getName(m),
+			battlePower.power,
+			battlePower.name,
+		),
+	)
 	sendMessage(m.ChannelID, battlePower.url)
+
+	if _, err := db.InsertActivity(m.Author.ID, db.ActivityKindBattlePower); err != nil {
+		postSlackWarning(errors.WithStack(err))
+	}
 }
 
 type battlePower struct {
