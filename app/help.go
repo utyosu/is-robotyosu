@@ -33,5 +33,6 @@ var (
 		{weaponKeywords, "スプラトゥーン2のオススメブキを表示"},
 		{foodPornKeywords, "ごちそうを表示"},
 		{battlePowerKeyword, "戦闘力を測定"},
+		{lotteryKeywords, "宝くじを引く"},
 	}
 )
