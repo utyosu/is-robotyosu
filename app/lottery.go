@@ -13,6 +13,15 @@ func isLotteryExecute(m *discordgo.MessageCreate) bool {
 }
 
 func actionLottery(m *discordgo.MessageCreate) {
+	activities, err := db.FetchTodayActivities(m.Author.ID, db.ActivityKindLottery)
+	if err != nil {
+		sendMessage(m.ChannelID, messageError)
+		return
+	} else if len(activities) >= 3 {
+		sendMessage(m.ChannelID, "くじは1日に3回までしか引けません。また明日チャレンジしてね！")
+		return
+	}
+
 	var msg string
 	r := rand.Intn(6096454)
 	if r == 0 {
@@ -33,7 +42,7 @@ func actionLottery(m *discordgo.MessageCreate) {
 		fmt.Sprintf(msg, getName(m)),
 	)
 
-	if _, err := db.InsertActivity(m.Author.ID, db.ActivityKindWeapon); err != nil {
+	if _, err := db.InsertActivity(m.Author.ID, db.ActivityKindLottery); err != nil {
 		postSlackWarning(errors.WithStack(err))
 	}
 }
