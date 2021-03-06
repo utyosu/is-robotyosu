@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/utyosu/rfe/env"
+	"github.com/utyosu/robotyosu-go/slack"
 	"log"
 	"time"
 )
@@ -62,6 +63,6 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func sendMessage(channelID string, msg string) {
 	if _, err := discordSession.ChannelMessageSend(channelID, msg); err != nil {
-		postSlackWarning(fmt.Sprintf("Error sending message: %v", err))
+		slack.PostSlackWarning(fmt.Sprintf("Error sending message: %v", err))
 	}
 }

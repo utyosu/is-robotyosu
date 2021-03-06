@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/utyosu/robotyosu-go/slack"
 	"strings"
 	"time"
 )
@@ -25,7 +26,7 @@ func getName(m *discordgo.MessageCreate) string {
 
 func NotifySlackWhenPanic(info string) {
 	if err := recover(); err != nil {
-		postSlackAlert(fmt.Sprintf("panic: %v\ninfo: %v", err, info))
+		slack.PostSlackAlert(fmt.Sprintf("panic: %v\ninfo: %v", err, info))
 	}
 }
 
