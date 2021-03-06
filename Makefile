@@ -1,3 +1,5 @@
+TIMESTAMP := $(shell date '+%Y%m%d%H%M')
+
 fmt:
 	go fmt ./...
 
@@ -45,3 +47,7 @@ migrate-db-down-local:
 migrate-db-production:
 	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 	migrate -path db/migrations -database "mysql://${RFE_DATABASE_USER_PRODUCTION}:${RFE_DATABASE_PASSWORD_PRODUCTION}@tcp(${RFE_DATABASE_HOST_PRODUCTION}:${RFE_DATABASE_PORT_PRODUCTION})/${RFE_DATABASE_NAME_PRODUCTION}" up
+
+backup-db-production:
+	mkdir -p db/backups
+	mysqldump -u ${RFE_DATABASE_USER_PRODUCTION} -h ${RFE_DATABASE_HOST_PRODUCTION} -P ${RFE_DATABASE_PORT_PRODUCTION} ${RFE_DATABASE_NAME_PRODUCTION} --skip-comments --no-tablespaces --set-gtid-purged=OFF -p > db/backups/dump_rfe_production_$(TIMESTAMP).sql
