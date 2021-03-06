@@ -5,6 +5,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/pkg/errors"
 	"github.com/utyosu/rfe/db"
+	"github.com/utyosu/robotyosu-go/slack"
 	"math/rand"
 )
 
@@ -26,7 +27,7 @@ func actionWeapon(m *discordgo.MessageCreate) {
 	)
 
 	if _, err := db.InsertActivity(m.Author.ID, db.ActivityKindWeapon); err != nil {
-		postSlackWarning(errors.WithStack(err))
+		slack.PostSlackWarning(errors.WithStack(err))
 	}
 }
 

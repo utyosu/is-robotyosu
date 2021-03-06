@@ -18,6 +18,7 @@ const (
 	SlackToken             = ""
 	SlackChannelWarning    = "#channel-name"
 	SlackChannelAlert      = "#channel-name"
+	SlackTitle             = ""
 	RecordGuildId          = ""
 	RecordIntervalTime     = 300
 )
