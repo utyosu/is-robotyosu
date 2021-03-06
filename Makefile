@@ -1,4 +1,6 @@
-TIMESTAMP := $(shell date '+%Y%m%d%H%M')
+TIMESTAMP := $(shell TZ='Asia/Tokyo' date '+%Y%m%d%H%M')
+BACKUP_DIR := db/backups
+BACKUP_FILE_PREFIX := dump_rfe_production_
 
 fmt:
 	go fmt ./...
@@ -50,4 +52,5 @@ migrate-db-production:
 
 backup-db-production:
 	mkdir -p db/backups
-	mysqldump -u ${RFE_DATABASE_USER_PRODUCTION} -h ${RFE_DATABASE_HOST_PRODUCTION} -P ${RFE_DATABASE_PORT_PRODUCTION} ${RFE_DATABASE_NAME_PRODUCTION} --skip-comments --no-tablespaces --set-gtid-purged=OFF -p > db/backups/dump_rfe_production_$(TIMESTAMP).sql
+	mysqldump -u ${RFE_DATABASE_USER_PRODUCTION} -h ${RFE_DATABASE_HOST_PRODUCTION} -P ${RFE_DATABASE_PORT_PRODUCTION} ${RFE_DATABASE_NAME_PRODUCTION} --skip-comments --no-tablespaces --set-gtid-purged=OFF --default-character-set=binary -p > ${BACKUP_DIR}/${BACKUP_FILE_PREFIX}$(TIMESTAMP).sql
+	@echo "Create dump to ${BACKUP_DIR}/${BACKUP_FILE_PREFIX}$(TIMESTAMP).sql"
