@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/pkg/errors"
 	"github.com/utyosu/rfe/env"
 	"github.com/utyosu/robotyosu-go/slack"
 	"log"
@@ -49,7 +50,7 @@ func Start() {
 }
 
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	defer NotifySlackWhenPanic(messageInformation(s, m))
+	defer NotifySlackWhenPanic(s, m)
 
 	// 自分のメッセージは処理しない
 	if m.Author.ID == env.DiscordBotClientId {
@@ -78,6 +79,10 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func sendMessage(channelID string, msg string) {
 	if _, err := discordSession.ChannelMessageSend(channelID, msg); err != nil {
-		slackWarning.Post(fmt.Sprintf("Error sending message: %v", err))
+		slackWarning.Post(
+			errors.WithStack(err),
+			channelID,
+			msg,
+		)
 	}
 }
