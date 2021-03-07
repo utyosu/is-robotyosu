@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"strconv"
@@ -52,7 +51,6 @@ func InsertActivity(discordUserlIdStr string, kind ActivityKind) (*Activity, err
 func FetchTodayActivities(discordUserlIdStr string, kind ActivityKind) ([]*Activity, error) {
 	now := time.Now()
 	todayStartTime := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
-	fmt.Println(todayStartTime)
 
 	activities := []*Activity{}
 	err := dbs.Find(&activities, "discord_user_id = ? and kind = ? and created_at >= ?", discordUserlIdStr, kind, todayStartTime).Error
