@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"strconv"
@@ -11,10 +10,10 @@ import (
 type Activity struct {
 	gorm.Model
 	DiscordUserId int64
-	Kind          uint
+	Kind          uint32
 }
 
-type ActivityKind uint
+type ActivityKind uint32
 
 const (
 	ActivityKindBattlePower         ActivityKind = 1
@@ -41,7 +40,7 @@ func InsertActivity(discordUserlIdStr string, kind ActivityKind) (*Activity, err
 
 	activity := Activity{
 		DiscordUserId: discordUserlId,
-		Kind:          uint(kind),
+		Kind:          uint32(kind),
 	}
 	if err := dbs.Create(&activity).Error; err != nil {
 		return nil, errors.WithStack(err)
@@ -52,9 +51,8 @@ func InsertActivity(discordUserlIdStr string, kind ActivityKind) (*Activity, err
 func FetchTodayActivities(discordUserlIdStr string, kind ActivityKind) ([]*Activity, error) {
 	now := time.Now()
 	todayStartTime := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.Local)
-	fmt.Println(todayStartTime)
 
 	activities := []*Activity{}
-	err := dbs.Find(&activities, "discord_user_id = ? and kind = ? and created_at >= ?", discordUserlIdStr, uint(kind), todayStartTime).Error
+	err := dbs.Find(&activities, "discord_user_id = ? and kind = ? and created_at >= ?", discordUserlIdStr, kind, todayStartTime).Error
 	return activities, errors.WithStack(err)
 }
