@@ -4,6 +4,7 @@ import (
 	basic_errors "errors"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	"strconv"
 )
 
 type User struct {
@@ -12,9 +13,9 @@ type User struct {
 	Name          string
 }
 
-func FindUser(discordUserId int64) (*User, error) {
+func FindUser(discordUserIdStr string) (*User, error) {
 	user := User{}
-	if err := dbs.Take(&user, "discord_user_id=?", discordUserId).Error; err != nil {
+	if err := dbs.Take(&user, "discord_user_id=?", discordUserIdStr).Error; err != nil {
 		if basic_errors.Is(err, gorm.ErrRecordNotFound) {
 			return &user, nil
 		}
@@ -23,12 +24,13 @@ func FindUser(discordUserId int64) (*User, error) {
 	return &user, nil
 }
 
-func FindOrCreateUser(discordUserId int64, name string) (*User, error) {
-	user, err := FindUser(discordUserId)
+func FindOrCreateUser(discordUserIdStr string, name string) (*User, error) {
+	user, err := FindUser(discordUserIdStr)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 	if user.ID == 0 {
+		discordUserId, _ := strconv.ParseInt(discordUserIdStr, 10, 64)
 		user.DiscordUserId = discordUserId
 		user.Name = name
 		if err := dbs.Create(&user).Error; err != nil {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/pkg/errors"
+	"github.com/utyosu/rfe/db"
 	"github.com/utyosu/rfe/env"
 	"github.com/utyosu/robotyosu-go/slack"
 	"log"
@@ -64,6 +65,15 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 	log.Printf("\t%v\t%v\t%v\t%v\t%v\n", m.GuildID, m.ChannelID, m.Type, m.Author.Username, m.Content)
+
+	// ユーザー登録
+	name := m.Author.Username
+	if m.Member != nil && m.Member.Nick != "" {
+		name = m.Member.Nick
+	}
+	if _, err := db.FindOrCreateUser(m.Author.ID, name); err != nil {
+		slackWarning.Post(err)
+	}
 
 	switch {
 	case isVersionExecute(m):
