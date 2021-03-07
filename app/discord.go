@@ -15,6 +15,8 @@ var (
 	stopBot        = make(chan bool)
 	slackAlert     *slack.Config
 	slackWarning   *slack.Config
+	commitHash     string
+	buildDatetime  string
 )
 
 func init() {
@@ -64,6 +66,8 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	log.Printf("\t%v\t%v\t%v\t%v\t%v\n", m.GuildID, m.ChannelID, m.Type, m.Author.Username, m.Content)
 
 	switch {
+	case isVersionExecute(m):
+		actionVersion(m)
 	case isHelpExecute(m):
 		actionHelp(m)
 	case isWeaponExecute(m):

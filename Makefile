@@ -1,6 +1,9 @@
 TIMESTAMP := $(shell TZ='Asia/Tokyo' date '+%Y%m%d%H%M')
 BACKUP_DIR := db/backups
 BACKUP_FILE_PREFIX := dump_rfe_production_
+LD_FLAGS := \
+  -X 'github.com/utyosu/rfe/app.commitHash=$(shell git log --pretty=format:%H -n 1)' \
+  -X 'github.com/utyosu/rfe/app.buildDatetime=$(shell TZ='Asia/Tokyo' date '+%Y-%m-%d %H:%M:%S JST')'
 
 fmt:
 	go fmt ./...
@@ -9,10 +12,10 @@ tidy:
 	go mod tidy
 
 build-local: fmt tidy
-	go build -o bin/rfe-local -tags="local"
+	go build -ldflags="${LD_FLAGS}" -o bin/rfe-local -tags="local"
 
 build-production:
-	GOOS=linux GOARCH=amd64 go build -o bin/rfe-production -tags="production"
+	GOOS=linux GOARCH=amd64 go build -ldflags="${LD_FLAGS}" -o bin/rfe-production -tags="production"
 
 run-local: build-local
 	sleep 0.5
