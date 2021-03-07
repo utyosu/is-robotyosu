@@ -5,7 +5,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/pkg/errors"
 	"github.com/utyosu/rfe/db"
-	"github.com/utyosu/robotyosu-go/slack"
 	"math/rand"
 )
 
@@ -36,7 +35,7 @@ func actionBattlePower(m *discordgo.MessageCreate) {
 	sendMessage(m.ChannelID, battlePower.url)
 
 	if _, err := db.InsertActivity(m.Author.ID, db.ActivityKindBattlePower); err != nil {
-		slack.PostSlackWarning(errors.WithStack(err))
+		slackWarning.Post(errors.WithStack(err))
 	}
 }
 

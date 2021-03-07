@@ -7,7 +7,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/utyosu/rfe/db"
 	"github.com/utyosu/rfe/env"
-	"github.com/utyosu/robotyosu-go/slack"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -87,12 +86,12 @@ func actionFoodPorn(m *discordgo.MessageCreate) {
 	sendMessage(m.ChannelID, linkUrl)
 
 	if _, err := db.InsertActivity(m.Author.ID, db.ActivityKindFoodPorn); err != nil {
-		slack.PostSlackWarning(errors.WithStack(err))
+		slackWarning.Post(errors.WithStack(err))
 	}
 }
 
 func failedFoodPorn(m *discordgo.MessageCreate, err error) {
-	slack.PostSlackWarning(err)
+	slackWarning.Post(err)
 	sendMessage(m.ChannelID, "ごちそうの取得に失敗しました(´・ω・`)ｼｮﾎﾞﾝ")
 }
 

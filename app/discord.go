@@ -12,7 +12,22 @@ import (
 var (
 	discordSession *discordgo.Session
 	stopBot        = make(chan bool)
+	slackAlert     *slack.Config
+	slackWarning   *slack.Config
 )
+
+func init() {
+	slackAlert = &slack.Config{
+		Channel: env.SlackChannelAlert,
+		Token:   env.SlackToken,
+		Title:   env.SlackTitle,
+	}
+	slackWarning = &slack.Config{
+		Channel: env.SlackChannelWarning,
+		Token:   env.SlackToken,
+		Title:   env.SlackTitle,
+	}
+}
 
 func Start() {
 	var err error
@@ -63,6 +78,6 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func sendMessage(channelID string, msg string) {
 	if _, err := discordSession.ChannelMessageSend(channelID, msg); err != nil {
-		slack.PostSlackWarning(fmt.Sprintf("Error sending message: %v", err))
+		slackWarning.Post(fmt.Sprintf("Error sending message: %v", err))
 	}
 }

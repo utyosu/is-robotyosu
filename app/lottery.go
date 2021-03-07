@@ -5,7 +5,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/pkg/errors"
 	"github.com/utyosu/rfe/db"
-	"github.com/utyosu/robotyosu-go/slack"
 	"math/rand"
 )
 
@@ -44,7 +43,7 @@ func actionLottery(m *discordgo.MessageCreate) {
 	)
 
 	if _, err := db.InsertActivity(m.Author.ID, db.ActivityKindLottery); err != nil {
-		slack.PostSlackWarning(errors.WithStack(err))
+		slackWarning.Post(errors.WithStack(err))
 	}
 }
 
