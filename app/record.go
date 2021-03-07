@@ -5,13 +5,12 @@ import (
 	"github.com/pkg/errors"
 	"github.com/utyosu/rfe/db"
 	"github.com/utyosu/rfe/env"
-	"github.com/utyosu/robotyosu-go/slack"
 	"strconv"
 )
 
 func recordServerActivities() {
 	if err := recordServerActivitiesImpl(); err != nil {
-		slack.PostSlackWarning(err)
+		slackWarning.Post(err)
 	}
 }
 

@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/pkg/errors"
 	"github.com/utyosu/rfe/env"
 	"github.com/utyosu/robotyosu-go/slack"
 	"log"
@@ -12,7 +13,22 @@ import (
 var (
 	discordSession *discordgo.Session
 	stopBot        = make(chan bool)
+	slackAlert     *slack.Config
+	slackWarning   *slack.Config
 )
+
+func init() {
+	slackAlert = &slack.Config{
+		Channel: env.SlackChannelAlert,
+		Token:   env.SlackToken,
+		Title:   env.SlackTitle,
+	}
+	slackWarning = &slack.Config{
+		Channel: env.SlackChannelWarning,
+		Token:   env.SlackToken,
+		Title:   env.SlackTitle,
+	}
+}
 
 func Start() {
 	var err error
@@ -34,7 +50,7 @@ func Start() {
 }
 
 func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	defer NotifySlackWhenPanic(messageInformation(s, m))
+	defer NotifySlackWhenPanic(s, m)
 
 	// 自分のメッセージは処理しない
 	if m.Author.ID == env.DiscordBotClientId {
@@ -63,6 +79,10 @@ func onMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func sendMessage(channelID string, msg string) {
 	if _, err := discordSession.ChannelMessageSend(channelID, msg); err != nil {
-		slack.PostSlackWarning(fmt.Sprintf("Error sending message: %v", err))
+		slackWarning.Post(
+			errors.WithStack(err),
+			channelID,
+			msg,
+		)
 	}
 }

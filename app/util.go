@@ -1,9 +1,7 @@
 package app
 
 import (
-	"fmt"
 	"github.com/bwmarrin/discordgo"
-	"github.com/utyosu/robotyosu-go/slack"
 	"strings"
 	"time"
 )
@@ -24,18 +22,10 @@ func getName(m *discordgo.MessageCreate) string {
 	return m.Author.Username
 }
 
-func NotifySlackWhenPanic(info string) {
+func NotifySlackWhenPanic(p ...interface{}) {
 	if err := recover(); err != nil {
-		slack.PostSlackAlert(fmt.Sprintf("panic: %v\ninfo: %v", err, info))
+		slackAlert.Post(p...)
 	}
-}
-
-func messageInformation(s *discordgo.Session, m *discordgo.MessageCreate) string {
-	return fmt.Sprintf(
-		"session: %v\nmessage: %v",
-		s,
-		m,
-	)
 }
 
 func doFuncSchedule(f func(), interval time.Duration) *time.Ticker {
