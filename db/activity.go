@@ -11,10 +11,10 @@ import (
 type Activity struct {
 	gorm.Model
 	DiscordUserId int64
-	Kind          uint
+	Kind          uint32
 }
 
-type ActivityKind uint
+type ActivityKind uint32
 
 const (
 	ActivityKindBattlePower         ActivityKind = 1
@@ -41,7 +41,7 @@ func InsertActivity(discordUserlIdStr string, kind ActivityKind) (*Activity, err
 
 	activity := Activity{
 		DiscordUserId: discordUserlId,
-		Kind:          uint(kind),
+		Kind:          uint32(kind),
 	}
 	if err := dbs.Create(&activity).Error; err != nil {
 		return nil, errors.WithStack(err)
@@ -55,6 +55,6 @@ func FetchTodayActivities(discordUserlIdStr string, kind ActivityKind) ([]*Activ
 	fmt.Println(todayStartTime)
 
 	activities := []*Activity{}
-	err := dbs.Find(&activities, "discord_user_id = ? and kind = ? and created_at >= ?", discordUserlIdStr, uint(kind), todayStartTime).Error
+	err := dbs.Find(&activities, "discord_user_id = ? and kind = ? and created_at >= ?", discordUserlIdStr, kind, todayStartTime).Error
 	return activities, errors.WithStack(err)
 }
