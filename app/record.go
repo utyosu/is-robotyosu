@@ -52,7 +52,7 @@ func recordServerActivitiesImpl() error {
 			return errors.WithStack(err)
 		}
 
-		if err := db.InsertUserStatus(discordUserId, discordChannelId, env.RecordIntervalTime); err != nil {
+		if err := db.InsertUserStatus(discordUserId, discordChannelId, int64(env.RecordInterval.Seconds())); err != nil {
 			return errors.WithStack(err)
 		}
 	}

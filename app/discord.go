@@ -8,7 +8,6 @@ import (
 	"github.com/utyosu/rfe/env"
 	"github.com/utyosu/robotyosu-go/slack"
 	"log"
-	"time"
 )
 
 var (
@@ -47,7 +46,7 @@ func Start() {
 	defer discordSession.Close()
 	log.Println("Listening...")
 
-	doFuncSchedule(recordServerActivities, time.Second*env.RecordIntervalTime)
+	doFuncSchedule(recordServerActivities, env.RecordInterval)
 	<-stopBot
 	return
 }

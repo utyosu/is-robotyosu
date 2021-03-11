@@ -2,6 +2,10 @@
 
 package env
 
+import (
+	"time"
+)
+
 const (
 	DiscordBotToken        = ""
 	DiscordBotClientId     = ""
@@ -20,5 +24,5 @@ const (
 	SlackChannelAlert      = "#channel-name"
 	SlackTitle             = ""
 	RecordGuildId          = ""
-	RecordIntervalTime     = 300
+	RecordInterval         = time.Second * 300
 )
